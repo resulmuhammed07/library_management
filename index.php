@@ -11,7 +11,7 @@ if (!$_SESSION["logged"]) {
     header("location: login.php");
     exit();
 }
-include
+include "function.php";
 ?>
 <!DOCTYPE html>
 
@@ -231,7 +231,7 @@ include
                                             </div>
                                             <div class="flex-grow-1">
                                                 <span class="fw-semibold d-block"><?= $_SESSION['username'] ?></span>
-                                                <small class="text-muted">Admin</small>
+                                                <small class="text-muted"><?= $user_type ?></small>
                                             </div>
                                         </div>
                                     </a>
