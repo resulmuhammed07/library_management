@@ -13,6 +13,7 @@ if (!$_SESSION["logged"]) {
 }
 include_once "db/database.php";
 include_once "function.php";
+
 ?>
 <!DOCTYPE html>
 
@@ -31,7 +32,7 @@ include_once "function.php";
             content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
 
-    <title>HOME PAGE</title>
+    <title>BOOKS PAGE</title>
 
     <meta name="description" content=""/>
 
@@ -51,12 +52,28 @@ include_once "function.php";
     <link rel="stylesheet" href="assets/vendor/css/core.css" class="template-customizer-core-css"/>
     <link rel="stylesheet" href="assets/vendor/css/theme-default.css" class="template-customizer-theme-css"/>
     <link rel="stylesheet" href="assets/css/demo.css"/>
+    <link rel="stylesheet" href="assets/css/books.css">
+
 
     <!-- Vendors CSS -->
     <link rel="stylesheet" href="assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css"/>
 
+    <link href="https://cdn.datatables.net/v/bs4/jq-3.7.0/jszip-3.10.1/dt-2.0.7/af-2.7.0/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/rr-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/sl-2.0.1/sr-1.4.1/datatables.min.css"
+          rel="stylesheet">
+
     <!-- Helpers -->
     <script src="assets/vendor/js/helpers.js"></script>
+
+
+    <style>
+        div.dt-container div.row:first-child {
+            padding: 20px;
+        }
+
+        div.dt-container div.row:last-child {
+            padding: 20px;
+        }
+    </style>
 
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <script src="assets/js/config.js"></script>
@@ -137,7 +154,7 @@ include_once "function.php";
 
             <ul class="menu-inner py-1">
                 <!-- Dashboard -->
-                <li class="menu-item active">
+                <li class="menu-item">
                     <a href="index.php" class="menu-link">
                         <i class="menu-icon tf-icons bx bx-home-circle"></i>
                         <div data-i18n="Analytics">Dashboard</div>
@@ -145,10 +162,10 @@ include_once "function.php";
                 </li>
                 <li class="menu-header small text-uppercase"><span class="menu-header-text">Components</span></li>
 
-                <li class="menu-item">
+                <li class="menu-item active">
                     <a href="books.php" class="menu-link">
                         <i class="menu-icon tf-icons bx bx-book"></i>
-                        <div data-i18n="Books">Books</div>
+                        <div data-i18n="Analytics">Books</div>
                     </a>
                 </li>
 
@@ -249,10 +266,108 @@ include_once "function.php";
 
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <div class="my-3"></div>
-
-
+                    <div class="card flex-column">
+                        <div class="card-header">
+                            <div class="row justify-content-between">
+                                <div class="col-md-auto">
+                                    <h5 class="">ALL BOOKS</h5>
+                                </div>
+                                <div class="col-md-auto">
+                                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
+                                            data-bs-target="#backDropModal" data-bs-backdrop="static">
+                                        <span class="tf-icons bx bx-book-add"></span>&nbsp; Add New Record
+                                    </button>
+                                    <!-- Modal -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive text-nowrap">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th style="width: auto">Book ID</th>
+                                    <th style="width: auto">Book Name</th>
+                                    <th style="width: auto">Author</th>
+                                    <th style="width: auto">Genre</th>
+                                    <th style="width: 5%">Page</th>
+                                    <th style="width: 5%">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody class="table-border-bottom-0">
+                                <?php
+                                foreach (get_all_books() as $book) {
+                                    echo '<tr>';
+                                    echo '<td>' . strval($book[0]) . '</td>';
+                                    echo '<td>' . strval($book[1]) . '</td>';
+                                    echo '<td>' . strval($book[4]) . '</td>';
+                                    echo '<td>' . strval($book[2]) . '</td>';
+                                    echo '<td>' . strval($book[3]) . '</td>';
+                                    echo '<td>
+                                            <div class="dropdown d-flex justify-content-end">
+                                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                                  <i class="bx bx-dots-vertical-rounded"></i>
+                                                </button>
+                                                <div class="dropdown-menu">
+                                                  <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-1"></i> Edit</a>
+                                                  <a class="dropdown-item" href="javascript:void(0);"> <i class="bx bx-trash me-1"></i> Delete</a>
+                                                </div>
+                                            </div>
+                                          </td>';
+                                    echo '</tr>';
+                                }
+                                ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
                 <!-- / Content -->
+
+                <div class="modal fade" id="backDropModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <form class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="backDropModalTitle">Modal title</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="add_book_form" method="post">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="add_book_name">Book Name</label>
+                                        <input type="text" class="form-control" id="add_book_name" name="book_name"
+                                               placeholder="John Doe" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="add_author">Book Author</label>
+                                        <input type="text" class="form-control" id="add_author" name="author"
+                                               placeholder="John Doe" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="genre" class="form-label">Genre</label>
+                                        <select id="genre" class="form-select" name="genre">
+                                            <?php
+                                            foreach (get_all_genre() as $genre) {
+                                                echo '<option value="' . strval($genre[0]) . '">' . strval($genre[1]) . '</option>';
+                                            }
+
+                                            ?>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="book_page">Book Page</label>
+                                        <input type="text" id="book_page" class="form-control" name="page"
+                                               placeholder="123" required>
+                                    </div>
+                                    <button name="add_new_book" type="submit" class="btn btn-primary">
+                                        Save
+                                    </button>
+                                </form>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
 
                 <div class="content-backdrop fade"></div>
             </div>
@@ -274,5 +389,31 @@ include_once "function.php";
 <script src="assets/vendor/js/menu.js"></script>
 <script src="assets/js/main.js"></script>
 
+<script src="libs/jquery-validation/jquery.validate.min.js"></script>
+<script src="libs/jquery-validation/additional-methods.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.datatables.net/v/bs4/jq-3.7.0/jszip-3.10.1/dt-2.0.7/af-2.7.0/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/rr-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/sl-2.0.1/sr-1.4.1/datatables.min.js"></script>
+
+
+<script>
+    $(function () {
+        $(".table").DataTable({
+            lengthMenu: [
+                [10, 25, 50],
+                [10, 25, 50]
+            ],
+            columnDefs: [
+                {
+                    target: 0,
+                    visible: false
+                }
+            ]
+        });
+
+        $('#add_book_form').validate();
+
+    })
+</script>
 </body>
 </html>
