@@ -126,7 +126,7 @@ check_status();
 
             <ul class="menu-inner py-1">
                 <!-- Dashboard -->
-                <li class="menu-item active">
+                <li class="menu-item">
                     <a href="index.php" class="menu-link">
                         <i class="menu-icon tf-icons bx bx-home-circle"></i>
                         <div data-i18n="Analytics">Dashboard</div>
@@ -140,7 +140,7 @@ check_status();
                         <div data-i18n="Books">Books</div>
                     </a>
                 </li>
-                <li class="menu-item">
+                <li class="menu-item active">
                     <a href="categories.php" class="menu-link">
                         <i class="menu-icon tf-icons bx bx-category"></i>
                         <div data-i18n="Categories">Categories</div>
@@ -249,6 +249,8 @@ check_status();
 
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <div class="my-3"></div>
+
+
 
 
                 </div>

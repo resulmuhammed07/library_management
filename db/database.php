@@ -9,8 +9,7 @@ class Database
     public string $dbname;
     public string $hostname;
 
-    function __construct()
-    {
+    function __construct() {
         $this->hostname = "localhost";
         $this->dbname = "books";
         $this->username = "root";
@@ -20,7 +19,8 @@ class Database
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             return $this->conn;
         } catch (PDOException $e) {
-            return json_encode($e);
+            echo json_encode(array('msg' => 'ERROR', 'type' => 'error'));
+            return null;
         }
     }
 }

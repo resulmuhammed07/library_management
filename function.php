@@ -28,3 +28,18 @@ function get_all_genre() {
     $genre->execute();
     return $genre->fetchAll();
 }
+
+function check_status() {
+    ob_start();
+    session_start();
+    if (!$_SESSION["logged"]) {
+        unset($_SESSION["logged"]);
+        unset($_SESSION["id"]);
+        unset($_SESSION["username"]);
+        unset($_SESSION["email"]);
+        unset($_SESSION["timestamp"]);
+        session_destroy();
+        header("location: login.php");
+        exit();
+    }
+}

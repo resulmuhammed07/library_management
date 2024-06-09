@@ -84,7 +84,7 @@ if (isset($_POST['login'])) {
         } else
             echo json_encode(array('msg' => 'Username or password is wrong', 'type' => 'error'));
     } else
-        echo json_encode(array('msg' => 'Try again', 'type' => 'error'));
+        echo json_encode(array('msg' => 'Username or password is wrong', 'type' => 'error'));
 
 
     $db = null;

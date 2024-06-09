@@ -1,19 +1,7 @@
 <?php
-ob_start();
-session_start();
-if (!$_SESSION["logged"]) {
-    unset($_SESSION["logged"]);
-    unset($_SESSION["id"]);
-    unset($_SESSION["username"]);
-    unset($_SESSION["email"]);
-    unset($_SESSION["timestamp"]);
-    session_destroy();
-    header("location: login.php");
-    exit();
-}
-include_once "db/database.php";
 include_once "function.php";
-
+check_status();
+include_once "db/database.php";
 ?>
 <!DOCTYPE html>
 
@@ -72,6 +60,10 @@ include_once "function.php";
 
         div.dt-container div.row:last-child {
             padding: 20px;
+        }
+
+        div:where(.swal2-container) {
+            z-index: 20000 !important;
         }
     </style>
 
@@ -168,7 +160,18 @@ include_once "function.php";
                         <div data-i18n="Analytics">Books</div>
                     </a>
                 </li>
-
+                <li class="menu-item">
+                    <a href="categories.php" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-category"></i>
+                        <div data-i18n="Categories">Categories</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="authors.php" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-pen"></i>
+                        <div data-i18n="Authors">Authors</div>
+                    </a>
+                </li>
             </ul>
         </aside>
         <!-- / Menu -->
@@ -274,7 +277,7 @@ include_once "function.php";
                                 </div>
                                 <div class="col-md-auto">
                                     <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
-                                            data-bs-target="#backDropModal" data-bs-backdrop="static">
+                                            data-bs-target="#add_new_book_modal">
                                         <span class="tf-icons bx bx-book-add"></span>&nbsp; Add New Record
                                     </button>
                                     <!-- Modal -->
@@ -299,18 +302,14 @@ include_once "function.php";
                                     echo '<tr>';
                                     echo '<td>' . strval($book[0]) . '</td>';
                                     echo '<td>' . strval($book[1]) . '</td>';
-                                    echo '<td>' . strval($book[4]) . '</td>';
                                     echo '<td>' . strval($book[2]) . '</td>';
                                     echo '<td>' . strval($book[3]) . '</td>';
+                                    echo '<td>' . strval($book[4]) . '</td>';
                                     echo '<td>
-                                            <div class="dropdown d-flex justify-content-end">
-                                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                                  <i class="bx bx-dots-vertical-rounded"></i>
-                                                </button>
-                                                <div class="dropdown-menu">
-                                                  <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-1"></i> Edit</a>
-                                                  <a class="dropdown-item" href="javascript:void(0);"> <i class="bx bx-trash me-1"></i> Delete</a>
-                                                </div>
+                                            <div class="d-flex text-nowrap">
+                                                  <button type="button" class="btn btn-sm btn-icon btn-outline-primary" id="book_edit_' . strval($book[0]) . '"><span class="tf-icon bx bx-edit-alt "></span></button>
+                                                  <span class="m-1"></span>
+                                                  <button type="button" class="btn btn-sm btn-icon btn-outline-danger" id="book_delete_' . strval($book[0]) . '"><span class="tf-icon bx bx-trash"></span></button>
                                             </div>
                                           </td>';
                                     echo '</tr>';
@@ -323,16 +322,19 @@ include_once "function.php";
                 </div>
                 <!-- / Content -->
 
-                <div class="modal fade" id="backDropModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <form class="modal-content">
+                <!-- Modal -->
+                <div class="modal fade" id="add_new_book_modal" data-backdrop="static" data-keyboard="false"
+                     tabindex="-1"
+                     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="backDropModalTitle">Modal title</h5>
+                                <h5 class="modal-title" id="staticBackdropLabel">ADD NEW BOOK</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <form id="add_book_form" method="post">
+                                <form id="add_book_form">
                                     <div class="mb-3">
                                         <label class="form-label" for="add_book_name">Book Name</label>
                                         <input type="text" class="form-control" id="add_book_name" name="book_name"
@@ -346,11 +348,11 @@ include_once "function.php";
                                     <div class="mb-3">
                                         <label for="genre" class="form-label">Genre</label>
                                         <select id="genre" class="form-select" name="genre">
+                                            <option value="-1" disabled selected>Choose One of Them</option>
                                             <?php
                                             foreach (get_all_genre() as $genre) {
                                                 echo '<option value="' . strval($genre[0]) . '">' . strval($genre[1]) . '</option>';
                                             }
-
                                             ?>
                                         </select>
                                     </div>
@@ -359,15 +361,77 @@ include_once "function.php";
                                         <input type="text" id="book_page" class="form-control" name="page"
                                                placeholder="123" required>
                                     </div>
-                                    <button name="add_new_book" type="submit" class="btn btn-primary">
-                                        Save
-                                    </button>
+                                    <div class="mt-5">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                                aria-label="Close">Close
+                                        </button>
+                                        <button type="submit" name="add_new_book" class="btn btn-primary mx-2"
+                                                aria-label="Save">Save
+                                        </button>
+                                        <button type="reset" class="btn btn-danger" aria-label="Clear Fields">Clear
+                                            All
+                                        </button>
+                                    </div>
                                 </form>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
-
+                <div class="modal fade" id="edit_book_modal" data-backdrop="static" data-keyboard="false"
+                     tabindex="-1"
+                     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="staticBackdropLabel">EDIT ROW</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="add_book_form">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="edit_book_name">Book Name</label>
+                                        <input type="text" class="form-control" id="edit_book_name"
+                                               name="edit_book_name"
+                                               placeholder="John Doe" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="edit_author">Book Author</label>
+                                        <input type="text" class="form-control" id="edit_author" name="edit_author"
+                                               placeholder="John Doe" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="edit_genre" class="form-label">Genre</label>
+                                        <select id="edit_genre" class="form-select" name="genre">
+                                            <option value="-1">Choose One of Them</option>
+                                            <?php
+                                            foreach (get_all_genre() as $genre) {
+                                                echo '<option value="' . strval($genre[0]) . '">' . strval($genre[1]) . '</option>';
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="edit_book_page">Book Page</label>
+                                        <input type="text" id="edit_book_page" class="form-control" name="edit_page"
+                                               placeholder="123" required>
+                                    </div>
+                                    <div class="mt-5">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                                aria-label="Close">Close
+                                        </button>
+                                        <button type="submit" name="edit_book" id="edit_book"
+                                                class="btn btn-primary mx-2" aria-label="Save">Save
+                                        </button>
+                                        <button type="reset" class="btn btn-danger" aria-label="Clear Fields">Clear
+                                            All
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="content-backdrop fade"></div>
             </div>
@@ -388,17 +452,16 @@ include_once "function.php";
 <script src="assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
 <script src="assets/vendor/js/menu.js"></script>
 <script src="assets/js/main.js"></script>
+<script src="https://cdn.datatables.net/v/bs4/jq-3.7.0/jszip-3.10.1/dt-2.0.7/af-2.7.0/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/rr-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/sl-2.0.1/sr-1.4.1/datatables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script src="libs/jquery-validation/jquery.validate.min.js"></script>
 <script src="libs/jquery-validation/additional-methods.min.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdn.datatables.net/v/bs4/jq-3.7.0/jszip-3.10.1/dt-2.0.7/af-2.7.0/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/rr-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/sl-2.0.1/sr-1.4.1/datatables.min.js"></script>
-
 
 <script>
     $(function () {
-        $(".table").DataTable({
+        var table = $(".table").DataTable({
             lengthMenu: [
                 [10, 25, 50],
                 [10, 25, 50]
@@ -411,8 +474,145 @@ include_once "function.php";
             ]
         });
 
-        $('#add_book_form').validate();
+        $('.table tbody').on('click', '[id^="book_edit_"]', function () {
+            var data = table.row(this.closest('tr')).data();
+            $('#edit_book_modal').modal('show');
+            $('#edit_book_name').val(data[1]).text();
+            $('#edit_author').val(data[2]).text()
+            $('#edit_book_page').val(data[4]).text();
+            let book_genre = data[3];
+            $('#edit_genre option').removeAttr('selected');
+            $('#edit_genre option').each(function () {
+                if (this.text == book_genre)
+                    $(this).attr('selected', 'selected')
+                else
+                    this.selectedIndex = -1
+            })
+        });
+        $('.table tbody').on('click', '[id^="book_delete_"]', function () {
+            var data = table.row(this.closest('tr')).data()[0];
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: "btn btn-success mx-3",
+                    cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+            swalWithBootstrapButtons.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, delete it!",
+                cancelButtonText: "No, cancel!",
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: 'POST',
+                        url: 'db/books.php',
+                        data: {
+                            delete_book: true,
+                            books_id: data
+                        },
+                        success: function (params) {
+                            console.log(params);
+                            dataJSON = JSON.parse(params);
+                            if (dataJSON['type'] === 'error') {
+                                swalWithBootstrapButtons.fire({
+                                    title: "Cancelled",
+                                    text: 'The record not found',
+                                    icon: "error"
+                                });
+                            } else if (dataJSON['type'] === 'success') {
+                                swalWithBootstrapButtons.fire({
+                                    toast: true,
+                                    title: "Deleted!",
+                                    text: "Your record has been deleted.",
+                                    icon: "success",
+                                    timer: 2000,
+                                    timerProgressBar: true
+                                }).then(function () {
+                                    window.location.reload();
+                                })
+                            } else {
+                                swalWithBootstrapButtons.fire({
+                                    toast: true,
+                                    title: "Wrong!",
+                                    text: "WRONG.",
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    })
 
+                } else if (
+                    result.dismiss === Swal.DismissReason.cancel
+                ) {
+                    swalWithBootstrapButtons.fire({
+                        title: "Cancelled",
+                        text: "Your record is safe :)",
+                        icon: "error"
+                    });
+                }
+            });
+
+        });
+
+        $('#add_book_form').validate({
+            rules: {
+                book_name: {
+                    minlength: 2
+                },
+                genre: {
+                    required: true
+                }
+            },
+            submitHandler: function (form) {
+                $('#add_new_book_modal').modal('hide')
+                $.ajax({
+                    type: 'POST',
+                    url: 'db/books.php',
+                    data: {
+                        book_name: $("#add_book_name").val(),
+                        author: $("#add_author").val(),
+                        genre: $("#genre option:selected").text(),
+                        page: $("#book_page").val(),
+                        add_new_book: ""
+                    },
+                    success: function (data) {
+                        $('#add_book_form').modal('hide')
+                        var parseddata = JSON.parse(data);
+                        if (parseddata['type'] === 'error') {
+                            swal.fire({
+                                title: 'ERROR',
+                                text: parseddata['msg'],
+                                icon: 'error'
+                            }).then(function () {
+                                $('#add_new_book_modal').modal('show')
+                            })
+                        } else if (parseddata['type'] === 'success') {
+                            swal.fire({
+                                title: 'SUCCESS',
+                                text: parseddata['msg'],
+                                icon: 'success',
+                                showConfirmButton: false,
+                                timer: 1500,
+                                allowOutsideClick: false
+                            }).then(function () {
+                                window.location.reload();
+                            })
+                        } else {
+                            swal.fire({
+                                title: 'Ooppps',
+                                text: 'Something happen',
+                                icon: 'info'
+                            })
+                        }
+                    }
+                })
+            }
+        });
     })
 </script>
 </body>

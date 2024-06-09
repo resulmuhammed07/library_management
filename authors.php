@@ -126,7 +126,7 @@ check_status();
 
             <ul class="menu-inner py-1">
                 <!-- Dashboard -->
-                <li class="menu-item active">
+                <li class="menu-item">
                     <a href="index.php" class="menu-link">
                         <i class="menu-icon tf-icons bx bx-home-circle"></i>
                         <div data-i18n="Analytics">Dashboard</div>
@@ -146,7 +146,7 @@ check_status();
                         <div data-i18n="Categories">Categories</div>
                     </a>
                 </li>
-                <li class="menu-item">
+                <li class="menu-item active">
                     <a href="authors.php" class="menu-link">
                         <i class="menu-icon tf-icons bx bx-pen"></i>
                         <div data-i18n="Authors">Authors</div>
