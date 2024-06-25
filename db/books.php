@@ -57,8 +57,29 @@ if (isset($_POST)) {
             echo json_encode(array('msg' => 'Deleted successfully', 'type' => 'success'));
         } else
             echo json_encode(array('msg' => 'Not Successfully', 'type' => 'error'));
+        $database = null;
+        $db = null;
     } else if (isset($_POST['add_genre'])) {
-        echo json_encode(array('msg' => $_POST['genre_name'], 'type' => 'error'));
+        $genre_name = secure_input($_POST['genre_name']);
+        if (empty($genre_name)) {
+            echo json_encode(array('msg' => 'WRONG', 'type' => 'error'));
+            return;
+        }
+        $created_time = time();
+        require_once 'database.php';
+        $database = new Database();
+        $db = $database->conn;
+        $ins_genre = $db->prepare('INSERT INTO genre(genre_name,genre_created_time) values (:genre_name,:created_time)');
+        $ins_genre->bindParam(':genre_name', $genre_name, PDO::PARAM_STR);
+        $ins_genre->bindParam(':created_time', $created_time, PDO::PARAM_INT);
+        $ins_genre->execute();
+        if ($ins_genre->rowCount() > 0) {
+            echo json_encode(array('msg' => 'Added successfully', 'type' => 'success'));
+        } else {
+            echo json_encode(array('msg' => 'Fields cannot be empty', 'type' => 'error'));
+        }
+        $database = null;
+        $db = null;
     } else {
         echo json_encode(array('msg' => 'Invalid request', 'type' => 'error'));
     }
