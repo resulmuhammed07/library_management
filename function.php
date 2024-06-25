@@ -13,6 +13,10 @@ function get_user_type() {
     return $user_type;
 }
 
+function secure_input($data): string {
+    return trim(htmlspecialchars(stripslashes(strip_tags($data))));
+}
+
 function get_all_books(): bool|array {
     $database = new Database();
     $db = $database->conn;
@@ -21,7 +25,7 @@ function get_all_books(): bool|array {
     return $books->fetchAll();
 }
 
-function get_all_genre() {
+function get_all_genre(): bool|array {
     $database = new Database();
     $db = $database->conn;
     $genre = $db->prepare('SELECT * FROM genre');
@@ -29,7 +33,7 @@ function get_all_genre() {
     return $genre->fetchAll();
 }
 
-function check_status() {
+function check_status(): void {
     ob_start();
     session_start();
     if (!$_SESSION["logged"]) {

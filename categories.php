@@ -362,7 +362,7 @@ check_status();
                             <div class="modal-body">
                                 <form id="edit_genre_form">
                                     <div class="mb-3">
-                                        <label class="form-label" for="edit_book_name">Genre Name</label>
+                                        <label class="form-label" for="edit_genre_name">Genre Name</label>
                                         <input type="text" class="form-control" id="edit_genre_name"
                                                name="edit_genre_name"
                                                placeholder="SCIENCE FICTION" required>
@@ -410,6 +410,8 @@ check_status();
 <script src="libs/jquery-validation/additional-methods.min.js"></script>
 
 <script>
+    let edit_id_categories = null;
+
     var table = $(".table").DataTable({
         lengthMenu: [
             [10, 25, 50],
@@ -425,6 +427,7 @@ check_status();
 
     $('.table tbody').on('click', '[id^="genre_edit_"]', function () {
         var data = table.row(this.closest('tr')).data();
+        edit_id_categories = data[0];
         $('#edit_genre_modal').modal('show');
         $('#edit_genre_name').val(data[1]).text()
     });
@@ -558,6 +561,7 @@ check_status();
                 url: 'db/books.php',
                 data: {
                     edit_genre: true,
+                    genre_id: edit_id_categories,
                     genre_name: $("#edit_genre_name").val()
                 },
                 success: function (data) {

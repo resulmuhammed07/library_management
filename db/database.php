@@ -2,7 +2,6 @@
 
 class Database
 {
-
     public PDO $conn;
     public string $password;
     public string $username;

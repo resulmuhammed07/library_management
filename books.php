@@ -1,7 +1,7 @@
 <?php
 include_once "function.php";
-check_status();
 include_once "db/database.php";
+check_status();
 ?>
 <!DOCTYPE html>
 
@@ -461,6 +461,9 @@ include_once "db/database.php";
 
 <script>
     $(function () {
+
+        let edit_id = null;
+
         var table = $(".table").DataTable({
             lengthMenu: [
                 [10, 25, 50],
@@ -476,6 +479,7 @@ include_once "db/database.php";
 
         $('.table tbody').on('click', '[id^="book_edit_"]', function () {
             var data = table.row(this.closest('tr')).data();
+            edit_id = data[0];
             $('#edit_book_modal').modal('show');
             $('#edit_book_name').val(data[1]).text();
             $('#edit_author').val(data[2]).text()
