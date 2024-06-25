@@ -57,9 +57,12 @@ if (isset($_POST)) {
             echo json_encode(array('msg' => 'Deleted successfully', 'type' => 'success'));
         } else
             echo json_encode(array('msg' => 'Not Successfully', 'type' => 'error'));
+    } else if (isset($_POST['add_genre'])) {
+        echo json_encode(array('msg' => $_POST['genre_name'], 'type' => 'error'));
     } else {
         echo json_encode(array('msg' => 'Invalid request', 'type' => 'error'));
     }
+
 
 }
 exit(404);

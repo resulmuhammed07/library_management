@@ -20,7 +20,7 @@ check_status();
             content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
 
-    <title>HOME PAGE</title>
+    <title>CATEGORIES PAGE</title>
 
     <meta name="description" content=""/>
 
@@ -44,11 +44,29 @@ check_status();
     <!-- Vendors CSS -->
     <link rel="stylesheet" href="assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css"/>
 
+    <link href="https://cdn.datatables.net/v/bs4/jq-3.7.0/jszip-3.10.1/dt-2.0.7/af-2.7.0/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/rr-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/sl-2.0.1/sr-1.4.1/datatables.min.css"
+          rel="stylesheet">
+
+
     <!-- Helpers -->
     <script src="assets/vendor/js/helpers.js"></script>
 
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <script src="assets/js/config.js"></script>
+
+    <style>
+        div.dt-container div.row:first-child {
+            padding: 20px;
+        }
+
+        div.dt-container div.row:last-child {
+            padding: 20px;
+        }
+
+        div:where(.swal2-container) {
+            z-index: 20000 !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -250,11 +268,121 @@ check_status();
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <div class="my-3"></div>
 
-
-
-
+                    <div class="card flex-column">
+                        <div class="card-header">
+                            <div class="row justify-content-between">
+                                <div class="col-md-auto">
+                                    <h5 class="">ALL GENRE</h5>
+                                </div>
+                                <div class="col-md-auto">
+                                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
+                                            data-bs-target="#add_new_genre_modal">
+                                        <span class="tf-icons bx bx-category"></span>&nbsp; Add New Record
+                                    </button>
+                                    <!-- Modal -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive text-nowrap">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th style="width: auto">Genre ID</th>
+                                    <th style="width: auto">Genre Name</th>
+                                    <th style="width: 5%">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody class="table-border-bottom-0">
+                                <?php
+                                foreach (get_all_genre() as $categories) {
+                                    echo '<tr>';
+                                    echo '<td>' . strval($categories[0]) . '</td>';
+                                    echo '<td>' . strval($categories[1]) . '</td>';
+                                    echo '<td>
+                                            <div class="d-flex text-nowrap">
+                                                  <button type="button" class="btn btn-sm btn-icon btn-outline-primary" id="genre_edit_' . strval($categories[0]) . '"><span class="tf-icon bx bx-edit-alt "></span></button>
+                                                  <span class="m-1"></span>
+                                                  <button type="button" class="btn btn-sm btn-icon btn-outline-danger" id="genre_delete_' . strval($categories[0]) . '"><span class="tf-icon bx bx-trash"></span></button>
+                                            </div>
+                                          </td>';
+                                    echo '</tr>';
+                                }
+                                ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
                 <!-- / Content -->
+
+                <div class="modal fade" id="add_new_genre_modal" data-backdrop="static" data-keyboard="false"
+                     tabindex="-1"
+                     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="staticBackdropLabel">ADD NEW GENRE</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="add_genre_form">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="add_genre_name">Genre Name</label>
+                                        <input type="text" class="form-control" id="add_genre_name" name="genre_name"
+                                               placeholder="John Doe" required>
+                                    </div>
+                                    <div class="mt-5">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                                aria-label="Close">Close
+                                        </button>
+                                        <button type="submit" name="add_new_genre" class="btn btn-primary mx-2"
+                                                aria-label="Save">Save
+                                        </button>
+                                        <button type="reset" class="btn btn-danger" aria-label="Clear Fields">Clear
+                                            All
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="edit_genre_modal" data-backdrop="static" data-keyboard="false"
+                     tabindex="-1"
+                     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="staticBackdropLabel">EDIT GENRE</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="edit_genre_form">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="edit_book_name">Genre Name</label>
+                                        <input type="text" class="form-control" id="edit_genre_name"
+                                               name="edit_genre_name"
+                                               placeholder="SCIENCE FICTION" required>
+                                    </div>
+                                    <div class="mt-5">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                                aria-label="Close">Close
+                                        </button>
+                                        <button type="submit" name="edit_genre" id="edit_genre"
+                                                class="btn btn-primary mx-2" aria-label="Save">Save
+                                        </button>
+                                        <button type="reset" class="btn btn-danger" aria-label="Clear Fields">Clear
+                                            All
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="content-backdrop fade"></div>
             </div>
@@ -275,6 +403,197 @@ check_status();
 <script src="assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
 <script src="assets/vendor/js/menu.js"></script>
 <script src="assets/js/main.js"></script>
+<script src="https://cdn.datatables.net/v/bs4/jq-3.7.0/jszip-3.10.1/dt-2.0.7/af-2.7.0/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/rr-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/sl-2.0.1/sr-1.4.1/datatables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script src="libs/jquery-validation/jquery.validate.min.js"></script>
+<script src="libs/jquery-validation/additional-methods.min.js"></script>
+
+<script>
+    var table = $(".table").DataTable({
+        lengthMenu: [
+            [10, 25, 50],
+            [10, 25, 50]
+        ],
+        columnDefs: [
+            {
+                target: 0,
+                visible: false
+            }
+        ]
+    });
+
+    $('.table tbody').on('click', '[id^="genre_edit_"]', function () {
+        var data = table.row(this.closest('tr')).data();
+        $('#edit_genre_modal').modal('show');
+        $('#edit_genre_name').val(data[1]).text()
+    });
+
+    $('.table tbody').on('click', '[id^="genre_delete_"]', function () {
+        var data = table.row(this.closest('tr')).data()[0];
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: "btn btn-success mx-3",
+                cancelButton: "btn btn-danger"
+            },
+            buttonsStyling: false
+        });
+        swalWithBootstrapButtons.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, delete it!",
+            cancelButtonText: "No, cancel!",
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: 'POST',
+                    url: 'db/books.php',
+                    data: {
+                        delete_book: true,
+                        books_id: data
+                    },
+                    success: function (params) {
+                        console.log(params);
+                        dataJSON = JSON.parse(params);
+                        if (dataJSON['type'] === 'error') {
+                            swalWithBootstrapButtons.fire({
+                                title: "Cancelled",
+                                text: 'The record not found',
+                                icon: "error"
+                            });
+                        } else if (dataJSON['type'] === 'success') {
+                            swalWithBootstrapButtons.fire({
+                                toast: true,
+                                title: "Deleted!",
+                                text: "Your record has been deleted.",
+                                icon: "success",
+                                timer: 2000,
+                                timerProgressBar: true
+                            }).then(function () {
+                                window.location.reload();
+                            })
+                        } else {
+                            swalWithBootstrapButtons.fire({
+                                toast: true,
+                                title: "Wrong!",
+                                text: "WRONG.",
+                                icon: "error"
+                            });
+                        }
+                    }
+                })
+
+            } else if (
+                result.dismiss === Swal.DismissReason.cancel
+            ) {
+                swalWithBootstrapButtons.fire({
+                    title: "Cancelled",
+                    text: "Your record is safe :)",
+                    icon: "error"
+                });
+            }
+        });
+
+    });
+
+    $('#add_genre_form').validate({
+        rules: {
+            genre_name: {
+                minlength: 2
+            }
+        },
+        submitHandler: function (form) {
+            $.ajax({
+                type: 'POST',
+                url: 'db/books.php',
+                data: {
+                    add_genre: true,
+                    genre_name: $("#add_genre_name").val()
+                },
+                success: function (data) {
+                    var parseddata = JSON.parse(data);
+                    if (parseddata['type'] === 'error') {
+                        swal.fire({
+                            title: 'ERROR',
+                            text: parseddata['msg'],
+                            icon: 'error'
+                        }).then(function () {
+                            $('#add_new_genre_modal').modal('show')
+                        })
+                    } else if (parseddata['type'] === 'success') {
+                        swal.fire({
+                            title: 'SUCCESS',
+                            text: parseddata['msg'],
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 1500,
+                            allowOutsideClick: false
+                        }).then(function () {
+                            window.location.reload();
+                        })
+                    } else {
+                        swal.fire({
+                            title: 'Ooppps',
+                            text: 'Something happen',
+                            icon: 'info'
+                        })
+                    }
+                }
+            })
+        }
+    });
+
+    $('#edit_genre_form').validate({
+        rules: {
+            edit_genre_name: {
+                minlength: 2
+            }
+        },
+        submitHandler: function (form) {
+            $.ajax({
+                type: 'POST',
+                url: 'db/books.php',
+                data: {
+                    edit_genre: true,
+                    genre_name: $("#edit_genre_name").val()
+                },
+                success: function (data) {
+                    var parseddata = JSON.parse(data);
+                    if (parseddata['type'] === 'error') {
+                        swal.fire({
+                            title: 'ERROR',
+                            text: parseddata['msg'],
+                            icon: 'error'
+                        }).then(function () {
+                            $('#edit_genre_modal').modal('show')
+                        })
+                    } else if (parseddata['type'] === 'success') {
+                        swal.fire({
+                            title: 'SUCCESS',
+                            text: parseddata['msg'],
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 1500,
+                            allowOutsideClick: false
+                        }).then(function () {
+                            window.location.reload();
+                        })
+                    } else {
+                        swal.fire({
+                            title: 'Ooppps',
+                            text: 'Something happen',
+                            icon: 'info'
+                        })
+                    }
+                }
+            })
+        }
+    });
+
+</script>
 
 </body>
 </html>
