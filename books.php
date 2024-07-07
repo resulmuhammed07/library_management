@@ -166,12 +166,6 @@ check_status();
                         <div data-i18n="Categories">Categories</div>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="authors.php" class="menu-link">
-                        <i class="menu-icon tf-icons bx bx-pen"></i>
-                        <div data-i18n="Authors">Authors</div>
-                    </a>
-                </li>
             </ul>
         </aside>
         <!-- / Menu -->

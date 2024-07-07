@@ -5,10 +5,6 @@ function get_user_type() {
         $user_type = "Admin";
     } else if ($user_type == 2) {
         $user_type = "User";
-    } else if ($user_type == 3) {
-        $user_type = "Teacher";
-    } else if ($user_type == 4) {
-        $user_type = "Student";
     }
     return $user_type;
 }
@@ -46,4 +42,31 @@ function check_status(): void {
         header("location: login.php");
         exit();
     }
+}
+
+function getTotalBoook(): int {
+    $database = new Database();
+    $db = $database->conn;
+    $books = $db->prepare('SELECT COUNT(*) FROM books');
+    $books->execute();
+    $total = $books->fetchAll();
+    return $total[0][0];
+}
+
+function getTotalCategory(): int {
+    $database = new Database();
+    $db = $database->conn;
+    $books = $db->prepare('SELECT COUNT(*) FROM genre');
+    $books->execute();
+    $total = $books->fetchAll();
+    return $total[0][0];
+}
+
+function getTotalAuthors(): int {
+    $database = new Database();
+    $db = $database->conn;
+    $authors = $db->prepare('SELECT COUNT(*) FROM authors');
+    $authors->execute();
+    $total = $authors->fetchAll();
+    return $total[0][0];
 }

@@ -1,6 +1,6 @@
 <?php
-include_once "function.php";
 include_once "db/database.php";
+include_once "function.php";
 check_status();
 ?>
 <!DOCTYPE html>
@@ -148,12 +148,6 @@ check_status();
                         <div data-i18n="Categories">Categories</div>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="authors.php" class="menu-link">
-                        <i class="menu-icon tf-icons bx bx-pen"></i>
-                        <div data-i18n="Authors">Authors</div>
-                    </a>
-                </li>
             </ul>
         </aside>
         <!-- / Menu -->
@@ -252,6 +246,45 @@ check_status();
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <div class="my-3"></div>
 
+                    <div class="row">
+                        <div class="col-12 order-1">
+                            <div class="row">
+                                <div class="col-lg-4 col-md-6 col-6 mb-4">
+                                    <div class="card">
+                                        <div class="card-body ">
+                                            <span class="fw-semibold d-block mb-2">
+                                                <i class="bx bx-book" style="margin-right: 10px"></i>
+                                                TOTAL BOOKS
+                                            </span>
+                                            <h3 class="card-title mb-2"><?= getTotalBoook() ?></h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-6 mb-4">
+                                    <div class="card">
+                                        <div class="card-body ">
+                                            <span class="fw-semibold d-block mb-2">
+                                                <i class="bx bx-category" style="margin-right: 10px">
+                                                </i>TOTAL CATEGORY
+                                            </span>
+                                            <h3 class="card-title mb-2"><?= getTotalCategory() ?></h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-6 mb-4">
+                                    <div class="card">
+                                        <div class="card-body ">
+                                            <span class="fw-semibold d-block mb-2">
+                                                <i class="bx bx-pen" style="margin-right: 10px"></i>
+                                                TOTAL AUTHORS
+                                            </span>
+                                            <h3 class="card-title mb-2"><?= getTotalAuthors()?></h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
                 <!-- / Content -->
