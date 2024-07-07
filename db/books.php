@@ -49,7 +49,7 @@ if (isset($_POST)) {
             echo json_encode(array('msg' => 'Deleted successfully', 'type' => 'success'));
         } else
             echo json_encode(array('msg' => 'Not Successfully', 'type' => 'error'));
-    } else if (isset($_POST['update_book'])) {
+    } else if (isset($_POST['edit_book'])) {
         $book_id = secure_input($_POST['books_id']);
         $book_name = secure_input($_POST['book_name']);
         $author_name = secure_input($_POST['author']);
@@ -58,6 +58,8 @@ if (isset($_POST)) {
         $update_time = time();
         if (empty($book_name) || empty($author_name) || empty($page) || empty($book_id) || empty($genre_name)) {
             echo json_encode(array('msg' => 'Fields cannot be empty', 'type' => 'error'));
+        } else {
+            echo json_encode(array('msg' => $book_id, 'type' => 'success'));
         }
     } else if (isset($_POST['add_genre'])) {
         $genre_name = secure_input($_POST['genre_name']);

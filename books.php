@@ -388,7 +388,7 @@ check_status();
                                         aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <form id="add_book_form">
+                                <form id="edit_book_form">
                                     <div class="mb-3">
                                         <label class="form-label" for="edit_book_name">Book Name</label>
                                         <input type="text" class="form-control" id="edit_book_name"
@@ -594,6 +594,62 @@ check_status();
                                 icon: 'error'
                             }).then(function () {
                                 $('#add_new_book_modal').modal('show')
+                            })
+                        } else if (parseddata['type'] === 'success') {
+                            swal.fire({
+                                title: 'SUCCESS',
+                                text: parseddata['msg'],
+                                icon: 'success',
+                                showConfirmButton: false,
+                                timer: 1500,
+                                allowOutsideClick: false
+                            }).then(function () {
+                                window.location.reload();
+                            })
+                        } else {
+                            swal.fire({
+                                title: 'Ooppps',
+                                text: 'Something happen',
+                                icon: 'info'
+                            })
+                        }
+                    }
+                })
+            }
+        });
+
+        $('#edit_book_form').validate({
+            rules: {
+                book_name: {
+                    minlength: 2
+                },
+                genre: {
+                    required: true
+                }
+            },
+            submitHandler: function (form) {
+                $('#edit_book_modal').modal('hide')
+                $.ajax({
+                    type: 'POST',
+                    url: 'db/books.php',
+                    data: {
+                        books_id: edit_id,
+                        book_name: $("#edit_book_name").val(),
+                        author: $("#edit_author").val(),
+                        genre: $("#edit_genre option:selected").text(),
+                        page: $("#edit_book_page").val(),
+                        edit_book: true
+                    },
+                    success: function (data) {
+                        $('#edit_book_modal').modal('hide')
+                        var parseddata = JSON.parse(data);
+                        if (parseddata['type'] === 'error') {
+                            swal.fire({
+                                title: 'ERROR',
+                                text: parseddata['msg'],
+                                icon: 'error'
+                            }).then(function () {
+                                $('#edit_book_modal').modal('show')
                             })
                         } else if (parseddata['type'] === 'success') {
                             swal.fire({
