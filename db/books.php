@@ -49,7 +49,6 @@ if (isset($_POST)) {
             echo json_encode(array('msg' => 'Deleted successfully', 'type' => 'success'));
         } else
             echo json_encode(array('msg' => 'Not Successfully', 'type' => 'error'));
-<<<<<<< HEAD
     } else if (isset($_POST['edit_book'])) {
         $book_id = secure_input($_POST['books_id']);
         $book_name = secure_input($_POST['book_name']);
@@ -62,10 +61,8 @@ if (isset($_POST)) {
         } else {
             echo json_encode(array('msg' => $book_id, 'type' => 'success'));
         }
-=======
         $database = null;
         $db = null;
->>>>>>> b6be3fe04d3ea6c6d5937af09062df0140979af5
     } else if (isset($_POST['add_genre'])) {
         $genre_name = secure_input($_POST['genre_name']);
         if (empty($genre_name)) {
@@ -73,12 +70,9 @@ if (isset($_POST)) {
             return;
         }
         $created_time = time();
-<<<<<<< HEAD
-=======
         require_once 'database.php';
         $database = new Database();
         $db = $database->conn;
->>>>>>> b6be3fe04d3ea6c6d5937af09062df0140979af5
         $ins_genre = $db->prepare('INSERT INTO genre(genre_name,genre_created_time) values (:genre_name,:created_time)');
         $ins_genre->bindParam(':genre_name', $genre_name, PDO::PARAM_STR);
         $ins_genre->bindParam(':created_time', $created_time, PDO::PARAM_INT);
@@ -88,7 +82,6 @@ if (isset($_POST)) {
         } else {
             echo json_encode(array('msg' => 'Fields cannot be empty', 'type' => 'error'));
         }
-<<<<<<< HEAD
     } else if (isset($_POST['edit_genre'])) {
         $genre_id = secure_input($_POST['genre_id']);
         $genre_name = secure_input($_POST['genre_name']);
@@ -106,12 +99,20 @@ if (isset($_POST)) {
             } else
                 echo json_encode(array('msg' => 'Not Successfully', 'type' => 'error'));
         }
-=======
         $database = null;
         $db = null;
->>>>>>> b6be3fe04d3ea6c6d5937af09062df0140979af5
+    } else if (isset($_POST['delete_genre'])) {
+        $genre_id = secure_input($_POST['genre_id']);
+        $genre_id = intval($genre_id);
+        $ins_genre = $db->prepare('DELETE books, genre FROM genre INNER JOIN books ON genre.genre_name = books.book_genre WHERE genre.genre_id = :genre_id');
+        $ins_genre->bindParam(':genre_id', $genre_id, PDO::PARAM_INT);
+        $ins_genre->execute();
+        if ($ins_genre->rowCount() > 0) {
+            echo json_encode(array('msg' => 'Deleted successfully', 'type' => 'success'));
+        } else
+            echo json_encode(array('msg' => 'Not Successfully', 'type' => 'error'));
     } else {
-        echo json_encode(array('msg' => 'Invalid request', 'type' => 'error'));
+        echo json_encode(array('msg' => 'Invalid page number', 'type' => 'error'));
     }
 }
 $database = null;

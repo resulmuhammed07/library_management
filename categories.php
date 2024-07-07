@@ -427,7 +427,7 @@ check_status();
     });
 
     $('.table tbody').on('click', '[id^="genre_delete_"]', function () {
-        var data = table.row(this.closest('tr')).data()[0];
+        var genre_id = table.row(this.closest('tr')).data()[0];
         const swalWithBootstrapButtons = Swal.mixin({
             customClass: {
                 confirmButton: "btn btn-success mx-3",
@@ -449,12 +449,12 @@ check_status();
                     type: 'POST',
                     url: 'db/books.php',
                     data: {
-                        delete_book: true,
-                        books_id: data
+                        delete_genre: true,
+                        genre_id: genre_id
                     },
                     success: function (params) {
-                        console.log(params);
-                        dataJSON = JSON.parse(params);
+                        console.log(params)
+                        let dataJSON = JSON.parse(params);
                         if (dataJSON['type'] === 'error') {
                             swalWithBootstrapButtons.fire({
                                 title: "Cancelled",
